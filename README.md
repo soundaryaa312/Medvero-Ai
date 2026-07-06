@@ -40,27 +40,35 @@ Open [http://localhost:18081](http://localhost:18081) in your browser to interac
 
 ```mermaid
 graph TD
-    START -->|Input: VerificationRequest| SC[Security Checkpoint]
-    SC -->|Route: security_event| SE[Security Event Handler]
-    SC -->|Route: continue| ORCH[Orchestrator Agent]
-    
+    START([START])
+    START -->|Input: Verification Request| SC[Security Checkpoint]
+
+    SC -->|security_event| SEH[Security Event Handler]
+    SEH --> END([END])
+
+    SC -->|continue| ORCH[Orchestrator]
+
     subgraph Multi-Agent Collaboration
         ORCH <-->|AgentTool| CE[ClaimsExtractor Agent]
         ORCH <-->|AgentTool| EV[EvidenceVerifier Agent]
         ORCH <-->|AgentTool| DS[DrugSafety Agent]
         ORCH <-->|AgentTool| RG[ReportGenerator Agent]
     end
-    
-    subgraph MCP Server Tools
-        EV <-->|Tool: retrieve_evidence / info| MCP[MCP Server Process]
-        DS <-->|Tool: check_interactions / validate_dosage / contraindications| MCP
+
+    subgraph MCP Server
+        EV <-->|retrieve_medical_evidence<br/>fetch_drug_info| MCP[MCP Server]
+        DS <-->|check_drug_interactions<br/>fetch_contraindications<br/>validate_dosage| MCP
     end
-    
-    ORCH -->|Output: dict| CC[Check Confidence Node]
-    CC -->|Confidence < 70%| HITL[RequestInput: Clinician Review]
+
+    ORCH -->|Verification Report| CC[Check Confidence]
+
+    CC -->|Confidence < 70%| HITL[RequestInput]
     HITL -->|Resume| CC
-    CC -->|Confidence >= 70%| FO[Final Output Node]
-    SE --> FO
+
+    CC -->|Confidence ≥ 70%| FO[Final Output]
+
+    FO --> END
+```
 ```
 
 ---
