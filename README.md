@@ -176,7 +176,7 @@ make run
 ![Cover Page Banner](assets/cover_page_banner.png)
 
 ### Architecture Diagram
-![Architecture Diagram](assets/architecture_diagram.png)
+![Architecture Diagram](assets/Architecture.png)
 
 ---
 
